@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int find_max_index_c(int *arr, int len);
+int find_max_index_c(int *arr, int start, int len);
 
 int main(int argc, char **argv) {
     const int ARR_MAX = 32;
@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     }
     int len = argc - 1;
 
-    int c_result = find_max_index_c(arr, len);
+    int c_result = find_max_index_c(arr, 0, len);
     printf("C: %d\n", c_result);
 
     /* TODO
