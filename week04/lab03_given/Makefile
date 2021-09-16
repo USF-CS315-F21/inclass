@@ -1,4 +1,4 @@
-PROGS = fib_rec sumarr_rec is_pal_rec
+PROGS = fib sumarr_rec is_pal_rec
 
 FIB_OBJS = fib.o fib_rec_c.o
 SUM_OBJS = sumarr.o sumarr_rec_c.o
@@ -9,6 +9,9 @@ OBJS = $(FIB_OBJS) $(SUM_OBJS) $(PAL_OBJS)
 %.o: %.c
 	gcc -c -g -o $@ $<
 
+%.o: %.s
+	as -g -o $@ $<
+
 all: $(PROGS)
 
 is_pal_rec: $(PAL_OBJS)
@@ -17,7 +20,7 @@ is_pal_rec: $(PAL_OBJS)
 sumarr_rec: $(SUM_OBJS)
 	gcc -g -o $@ $^
 
-fib_rec: $(FIB_OBJS)
+fib: $(FIB_OBJS)
 	gcc -g -o $@ $^
 
 clean:

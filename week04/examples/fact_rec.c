@@ -15,9 +15,8 @@ int main(int argc, char **argv) {
     int c_result = fact_rec_c(n);
     printf("C: %d\n", c_result);
 
-/*
     int s_result = fact_rec_s(n);
     printf("Asm: %d\n", s_result);
-*/
+
     return 0;
 }
