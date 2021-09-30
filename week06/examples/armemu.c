@@ -58,7 +58,7 @@ void arm_state_print(struct arm_state *asp) {
         printf("regs[%2d] = %8X (%d)\n", i, asp->regs[i],
                asp->regs[i]);
     }
-    printf("cpsr = %8X\n", asp->cpsr);
+    printf("cpsr     = %8X\n", asp->cpsr);
 }
 
 bool armemu_is_bx(uint32_t iw) {
@@ -101,6 +101,35 @@ void armemu_add(struct arm_state *asp, uint32_t iw) {
     asp->regs[PC] = asp->regs[PC] + 4;
 }
 
+bool armemu_is_sub(uint32_t iw) {
+    uint32_t dp_bits = (iw >> 26) & 0b11;
+    uint32_t opcode = (iw >> 21) & 0b1111;
+
+    return (dp_bits == 0) && (opcode == 0b0010);
+}
+
+void armemu_sub(struct arm_state *asp, uint32_t iw) {
+    uint32_t i_bit, rn, rd, rm, imm;
+
+    i_bit = (iw >> 25) & 0b1;
+    rn = (iw >> 16) & 0b1111;
+    rd = (iw >> 12) & 0b1111;
+    rm = iw & 0b1111;
+    imm = iw & 0b11111111;
+    
+    uint32_t oper2;
+
+    if (i_bit == 0) {
+        oper2 = asp->regs[rm];
+    } else {
+        oper2 = imm;
+    }
+
+    asp->regs[rd] = asp->regs[rn] - oper2;
+
+    asp->regs[PC] = asp->regs[PC] + 4;
+}
+
 void armemu_one(struct arm_state *asp) {
     uint32_t iw;
     uint32_t *pc;
@@ -111,6 +140,8 @@ void armemu_one(struct arm_state *asp) {
         armemu_bx(asp, iw);
     } else if (armemu_is_add(iw)) {
         armemu_add(asp, iw);
+    } else if (armemu_is_sub(iw)) {
+        armemu_sub(asp, iw);
     } else {
         printf("armemu_one() invalid instruction\n");
         exit(-1);
