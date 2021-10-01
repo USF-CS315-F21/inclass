@@ -72,16 +72,16 @@ void armemu_bx(struct arm_state *asp, uint32_t iw) {
     asp->regs[PC] = asp->regs[rn];
 }
 
-bool armemu_is_dp(uint32_t iw) {
+bool armemu_is_add(uint32_t iw) {
     uint32_t dp_bits = (iw >> 26) & 0b11;
+    uint32_t opcode = (iw >> 21) & 0b1111;
 
-    return (dp_bits == 0);
+    return (dp_bits == 0) && (opcode == 0b0100);
 }
 
-void armemu_dp(struct arm_state *asp, uint32_t iw) {
-    uint32_t opcode, i_bit, rn, rd, rm, imm;
+void armemu_add(struct arm_state *asp, uint32_t iw) {
+    uint32_t i_bit, rn, rd, rm, imm;
 
-    opcode = (iw >> 21) & 0b1111;
     i_bit = (iw >> 25) & 0b1;
     rn = (iw >> 16) & 0b1111;
     rd = (iw >> 12) & 0b1111;
@@ -96,16 +96,36 @@ void armemu_dp(struct arm_state *asp, uint32_t iw) {
         oper2 = imm;
     }
 
-    if (opcode == 0b0010) {
-        // sub
-        asp->regs[rd] = asp->regs[rn] - oper2;
-    } else if (opcode == 0b0100) {
-        // add
-        asp->regs[rd] = asp->regs[rn] + oper2;        
+    asp->regs[rd] = asp->regs[rn] + oper2;
+
+    asp->regs[PC] = asp->regs[PC] + 4;
+}
+
+bool armemu_is_sub(uint32_t iw) {
+    uint32_t dp_bits = (iw >> 26) & 0b11;
+    uint32_t opcode = (iw >> 21) & 0b1111;
+
+    return (dp_bits == 0) && (opcode == 0b0010);
+}
+
+void armemu_sub(struct arm_state *asp, uint32_t iw) {
+    uint32_t i_bit, rn, rd, rm, imm;
+
+    i_bit = (iw >> 25) & 0b1;
+    rn = (iw >> 16) & 0b1111;
+    rd = (iw >> 12) & 0b1111;
+    rm = iw & 0b1111;
+    imm = iw & 0b11111111;
+    
+    uint32_t oper2;
+
+    if (i_bit == 0) {
+        oper2 = asp->regs[rm];
     } else {
-        printf("armemu_dp() invalid opcode");
-        exit(-1);
+        oper2 = imm;
     }
+
+    asp->regs[rd] = asp->regs[rn] - oper2;
 
     asp->regs[PC] = asp->regs[PC] + 4;
 }
@@ -118,8 +138,10 @@ void armemu_one(struct arm_state *asp) {
 
     if (armemu_is_bx(iw)) {
         armemu_bx(asp, iw);
-    } else if (armemu_is_dp(iw)) {
-        armemu_dp(asp, iw);
+    } else if (armemu_is_add(iw)) {
+        armemu_add(asp, iw);
+    } else if (armemu_is_sub(iw)) {
+        armemu_sub(asp, iw);
     } else {
         printf("armemu_one() invalid instruction\n");
         exit(-1);
