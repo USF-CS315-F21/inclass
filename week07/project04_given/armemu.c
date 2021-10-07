@@ -7,6 +7,7 @@
 
 // Analysis functions
 
+// Project04: Analysis struct init
 void analysis_init(struct analysis_st *ap) {
     ap->i_count = 0;
     ap->dp_count = 0;
