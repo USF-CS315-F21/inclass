@@ -40,14 +40,15 @@ struct cache_slot_st {
     uint32_t valid;
     uint32_t tag;
     uint32_t data;
-    uint32_t timestamp;
+    uint32_t timestamp;  // SA only
 
 };
+
 struct cache_st {
     struct cache_slot_st slots[CACHE_MAX_SLOTS];
     int type;
     int size;
-    int ways;
+    int ways;            // SA only
     uint32_t index_mask;
     uint32_t index_bits;
     int refs;
