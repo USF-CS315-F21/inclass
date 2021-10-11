@@ -9,7 +9,7 @@ loop:
     beq done
     cmp r1, #97         @ less than 'a', go again
     blt next
-    cmp r1, #115        @ greater than 'z', go again
+    cmp r1, #122        @ greater than 'z', go again
     bgt next
     sub r1, r1, #32     @ in range 'a' ... 'z', make upper
     strb r1, [r0, ip]   @ store to buffer
