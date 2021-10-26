@@ -19,7 +19,7 @@ void cache_init(struct cache_st *csp) {
               csp->index_bits++;
     }
 
-    for (int i = 0; i < CACHE_MAX_SLOTS; i++) {
+    for (int i = 0; i < csp->size; i++) {
         csp->slots[i].valid = 0;
         csp->slots[i].tag = 0;
         csp->slots[i].data = 0;
