@@ -77,7 +77,7 @@ void analyze_code(struct analyze_st *ap, uint32_t *code) {
             ap->bx_count += 1;
         } else if (bits27_22 == 0b000000 && bits7_4 == 0b1001) {
             ap->mul_count += 1;
-        } else if (bits31_28 == 0b1110 & bits27_25 == 0b101 &
+        } else if (bits31_28 == 0b1110 && bits27_25 == 0b101 &&
                bit24 == 0b1) {
             ap->bl_count += 1;
         } else if (bits31_28 == 0b1110 && bits27_25 == 0b101) {
